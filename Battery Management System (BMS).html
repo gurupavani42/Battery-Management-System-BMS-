@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Battery Management System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #eef5f9;
+        }
+
+        header {
+            background: #12344d;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 25px auto;
+            padding: 15px;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px #ccc;
+        }
+
+        .icon {
+            font-size: 40px;
+        }
+
+        .card h3 {
+            margin: 10px 0;
+        }
+
+        .value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .control {
+            background: white;
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px #ccc;
+        }
+
+        .input-group {
+            margin: 18px 0;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+
+        .input-value {
+            font-weight: bold;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 7px;
+            background: #1976d2;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #0d47a1;
+        }
+
+        .battery-box {
+            background: white;
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 3px 10px #ccc;
+        }
+
+        .battery {
+            width: 80%;
+            height: 45px;
+            margin: 20px auto;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        #batteryBar {
+            width: 70%;
+            height: 100%;
+            background: green;
+            transition: 0.5s;
+        }
+
+        .status {
+            background: white;
+            margin-top: 25px;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 3px 10px #ccc;
+        }
+
+        #systemStatus {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .normal {
+            color: green;
+        }
+
+        .warning {
+            color: orange;
+        }
+
+        .danger {
+            color: red;
+        }
+
+        @media (max-width: 700px) {
+            .dashboard {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>🔋 Battery Management System</h1>
+
+    <p>
+        Battery Monitoring and Protection Dashboard
+    </p>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- Dashboard -->
+
+    <div class="dashboard">
+
+        <div class="card">
+
+            <div class="icon">🔋</div>
+
+            <h3>Battery Voltage</h3>
+
+            <div class="value" id="voltageDisplay">
+                48 V
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">⚡</div>
+
+            <h3>Battery Current</h3>
+
+            <div class="value" id="currentDisplay">
+                10 A
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">🌡️</div>
+
+            <h3>Temperature</h3>
+
+            <div class="value" id="temperatureDisplay">
+                30 °C
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <div class="icon">📊</div>
+
+            <h3>Battery SOC</h3>
+
+            <div class="value" id="socDisplay">
+                70%
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Controls -->
+
+    <div class="control">
+
+        <h2>Battery Parameters</h2>
+
+
+        <div class="input-group">
+
+            <label>
+                Battery Voltage:
+                <span class="input-value" id="voltageValue">
+                    48 V
+                </span>
+            </label>
+
+            <input
+                type="range"
+                id="voltage"
+                min="30"
+                max="60"
+                value="48"
+                oninput="updateSystem()"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>
+                Battery Current:
+                <span class="input-value" id="currentValue">
+                    10 A
+                </span>
+            </label>
+
+            <input
+                type="range"
+                id="current"
+                min="0"
+                max="30"
+                value="10"
+                oninput="updateSystem()"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>
+                Battery Temperature:
+                <span class="input-value" id="temperatureValue">
+                    30 °C
+                </span>
+            </label>
+
+            <input
+                type="range"
+                id="temperature"
+                min="0"
+                max="100"
+                value="30"
+                oninput="updateSystem()"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label>
+                State of Charge (SOC):
+                <span class="input-value" id="socValue">
+                    70%
+                </span>
+            </label>
+
+            <input
+                type="range"
+                id="soc"
+                min="0"
+                max="100"
+                value="70"
+                oninput="updateSystem()"
+            >
+
+        </div>
+
+
+        <button onclick="startBMS()">
+            ▶ Start BMS
+        </button>
+
+        <button onclick="stopBMS()">
+            ⏹ Stop BMS
+        </button>
+
+    </div>
+
+
+    <!-- Battery Visualization -->
+
+    <div class="battery-box">
+
+        <h2>🔋 Battery Level</h2>
+
+        <div class="value" id="batteryPercentage">
+            70%
+        </div>
+
+        <div class="battery">
+
+            <div id="batteryBar"></div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Status -->
+
+    <div class="status">
+
+        <h2>System Status</h2>
+
+        <p id="systemStatus">
+            BMS STOPPED
+        </p>
+
+        <p id="message">
+            Press Start BMS to begin monitoring.
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+let bmsRunning = false;
+
+
+// Update system
+
+function updateSystem() {
+
+    let voltage =
+        Number(document.getElementById("voltage").value);
+
+    let current =
+        Number(document.getElementById("current").value);
+
+    let temperature =
+        Number(document.getElementById("temperature").value);
+
+    let soc =
+        Number(document.getElementById("soc").value);
+
+
+    // Display input values
+
+    document.getElementById("voltageValue").innerText =
+        voltage + " V";
+
+    document.getElementById("currentValue").innerText =
+        current + " A";
+
+    document.getElementById("temperatureValue").innerText =
+        temperature + " °C";
+
+    document.getElementById("socValue").innerText =
+        soc + "%";
+
+
+    // Dashboard values
+
+    document.getElementById("voltageDisplay").innerText =
+        voltage + " V";
+
+    document.getElementById("currentDisplay").innerText =
+        current + " A";
+
+    document.getElementById("temperatureDisplay").innerText =
+        temperature + " °C";
+
+    document.getElementById("socDisplay").innerText =
+        soc + "%";
+
+
+    // Battery bar
+
+    document.getElementById("batteryBar").style.width =
+        soc + "%";
+
+    document.getElementById("batteryPercentage").innerText =
+        soc + "%";
+
+
+    // Check status
+
+    if (bmsRunning) {
+
+        checkBatteryStatus(
+            voltage,
+            current,
+            temperature,
+            soc
+        );
+
+    }
+
+}
+
+
+// Battery protection logic
+
+function checkBatteryStatus(
+    voltage,
+    current,
+    temperature,
+    soc
+) {
+
+    let status =
+        document.getElementById("systemStatus");
+
+    let message =
+        document.getElementById("message");
+
+
+    // Over voltage
+
+    if (voltage > 55) {
+
+        status.innerText =
+            "⚠ OVER-VOLTAGE";
+
+        status.className =
+            "danger";
+
+        message.innerText =
+            "Battery voltage is above the safe simulation limit.";
+
+    }
+
+
+    // Under voltage
+
+    else if (voltage < 35) {
+
+        status.innerText =
+            "⚠ UNDER-VOLTAGE";
+
+        status.className =
+            "danger";
+
+        message.innerText =
+            "Battery voltage is below the safe simulation limit.";
+
+    }
+
+
+    // Over current
+
+    else if (current > 25) {
+
+        status.innerText =
+            "⚠ OVER-CURRENT";
+
+        status.className =
+            "danger";
+
+        message.innerText =
+            "Battery current is too high.";
+
+    }
+
+
+    // High temperature
+
+    else if (temperature > 60) {
+
+        status.innerText =
+            "⚠ HIGH TEMPERATURE";
+
+        status.className =
+            "danger";
+
+        message.innerText =
+            "Battery temperature is too high.";
+
+    }
+
+
+    // Low battery
+
+    else if (soc < 20) {
+
+        status.innerText =
+            "⚠ LOW BATTERY";
+
+        status.className =
+            "warning";
+
+        message.innerText =
+            "Battery state of charge is low.";
+
+    }
+
+
+    // Normal
+
+    else {
+
+        status.innerText =
+            "✓ BATTERY NORMAL";
+
+        status.className =
+            "normal";
+
+        message.innerText =
+            "Battery operating conditions are normal.";
+
+    }
+
+}
+
+
+// Start BMS
+
+function startBMS() {
+
+    bmsRunning = true;
+
+    document.getElementById("systemStatus").innerText =
+        "BMS RUNNING";
+
+    document.getElementById("systemStatus").className =
+        "normal";
+
+    updateSystem();
+
+}
+
+
+// Stop BMS
+
+function stopBMS() {
+
+    bmsRunning = false;
+
+    document.getElementById("systemStatus").innerText =
+        "BMS STOPPED";
+
+    document.getElementById("systemStatus").className =
+        "";
+
+    document.getElementById("message").innerText =
+        "Battery monitoring has been stopped.";
+
+}
+
+
+// Initial display
+
+updateSystem();
+
+</script>
+
+</body>
+</html>
